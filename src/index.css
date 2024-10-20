@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* @keyframes moveWord {
+    0% {
+      transform: translateX(-10%);
+    }
+    50% {
+      transform: translateX(32%);
+    } 
+    100% {
+      transform: translateX(100%);
+    }
+  } [animate-[moveWord_5s_ease-in-out_infinite]*/
