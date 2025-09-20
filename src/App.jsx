@@ -1,7 +1,7 @@
 
 import { useRef, useState } from "react";
 
-const Api_key = "e7f63ab6112250a6e7ac87f61407b11d";
+const Api_key = import.meta.env.VITE_API_KEY
 
 const App = () => {
   const inputRef = useRef(null);
@@ -56,10 +56,10 @@ const App = () => {
 
   const fetchForecast = (lat, lon) => {
     const city = inputRef.current.value;
-    const forecastURL = lat && lon 
-      ? `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${Api_key}` 
+    const forecastURL = lat && lon
+      ? `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${Api_key}`
       : `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${Api_key}`;
-    
+
     setLoading(true);
     fetch(forecastURL)
       .then((res) => res.json())
@@ -67,7 +67,7 @@ const App = () => {
         const dailyData = data.list.filter((reading) =>
           reading.dt_txt.includes("12:00:00")
         );
-        setForecastData(dailyData); 
+        setForecastData(dailyData);
         setLoading(false);
       })
       .catch((err) => {
@@ -99,103 +99,158 @@ const App = () => {
   };
 
   return (
-    <div className="bg-elliptical-gradient">
-      <div className="fixed h-16 bg-green-400 w-screen shadow-md bg-opacity-50 text-center pt-3">
-        <a href="#" className="text-3xl font-extrabold text-white">
-          WEATHER APP - Using OpenWeather Api
+    <div className="bg-gradient-to-r from-violet-600 to-indigo-600 overflow-hidden min-h-screen relative">
+      <div className="fixed py-5 bg-gradient-to-r from-violet-500 to-indigo-600 w-screen text-wrap shadow-md bg-opacity-50 text-center mb-10 z-50">
+        <a href="#" className="lg:text-4xl md:text-2xl text-xl text-wrap font-extrabold font-mono uppercase text-center text-white px-5 tracking-wider">
+          WEATHER APP
         </a>
       </div>
 
-      <div className=" h-screen place-items-center grid">
-        <div className="bg-white w-1/2 p-4 pt-3 rounded-md shadow-md shadow-gray-700">
+      <div className="absolute top-0 left-0 w-screen h-full opacity-20">
+        <img
+          src="/image.png"
+          alt="pattern"
+          className="w-full h-full object-cover filter brightness-50"
+        />
+      </div>
+
+      <div className=" place-items-center min-h-screen grid mx-3 sm:mx-5 relative mb-5">
+        <div className="bg-white w-full max-w-3xl p-4 rounded-md shadow-md mt-20 shadow-gray-700">
           {/* Search input and buttons */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <input
               type="text"
               ref={inputRef}
               placeholder="Enter Your City"
-              className="text-xl border-b p-1 border-gray-200 font-semiold uppercase flex-1"
+              className="text-base sm:text-xl border-b p-2 border-gray-200 uppercase flex-1 outline-none font-mono"
             />
-            <button onClick={(function() {fetchWeather(); getCurrentDate(); })}>
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/758/758651.png"
-                alt="..."
-                className="w-8 ml-2"
-              />
-            </button>
-            <button onClick={location}>
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/684/684908.png"
-                alt="..."
-                className="w-8 ml-2"
-              />
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={function () {
+                  fetchWeather();
+                  getCurrentDate();
+                }}
+              >
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/758/758651.png"
+                  alt="search"
+                  className="w-7 sm:w-8"
+                />
+              </button>
+              <button onClick={location}>
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/684/684908.png"
+                  alt="location"
+                  className="w-7 sm:w-8"
+                />
+              </button>
+            </div>
           </div>
+
           {/* Weather display section */}
-          <div className={`duration-300 delay-75 overflow-hidden ${showWeather ? "h-[27rem]" : "h-0"}`}>
+          <div
+            className={`duration-300 delay-75 overflow-hidden ${showWeather ? "h-auto mt-6" : "h-0"
+              }`}
+          >
             {loading ? (
-              <div className="grid place-items-center h-full">
+              <div className="grid place-items-center h-60">
                 <img
                   src="https://cdn-icons-png.flaticon.com/512/1477/1477009.png"
-                  alt="..."
-                  className="w-14 mx-auto mb-2 animate-spin"
+                  alt="loading"
+                  className="w-12 sm:w-14 mx-auto mb-2 animate-spin"
                 />
               </div>
             ) : (
               showWeather && (
-                <div className="text-left grid grid-cols-2 gap-4 mt-10">
+                <div className="text-left gap-6 lg:grid-cols-2">
                   {apiData && (
                     <>
-                      <div className="col-span-2 text-2xl mb-3 -mt-3 text-center font-semibold">
-                        {apiData.name}
-                        {apiData.sys?.country ? `, ${apiData.sys.country}` : 'IN'}
-                      </div>
-                      <div className="flex flex-col justify-between -ml-10">
-                        <img
-                          src={showWeather[0]?.img}
-                          alt="Weather Icon"
-                          className="w-36 mx-auto"
-                        />
-                        <div className="ml-28 m-5 flex flex-col justify-center">
-                          <h3 className="text-2xl font-bold text-zinc-800">{showWeather[0]?.type}</h3>
-                          {apiData && (
-                            <div className="flex flex-col justify-start">
-                              <div className="flex flex-row">
+                      {/* City Name */}
+                      <div className="flex place-items-center p-6">
+                        <div className=" w-full">
+                          {/* Header: City + Date */}
+                          <div className="flex flex-col lg:flex-row justify-between items-center text-center sm:text-left">
+                            <h2 className="text-lg sm:text-xl font-semibold lg:ml-5">
+                              {apiData?.name}, {apiData?.sys?.country || "IN"}
+                            </h2>
+                            <p className="text-sm sm:text-base mt-1 sm:mt-0">
+                              {new Date().toLocaleString("en-US", {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </p>
+                          </div>
+
+                          {/* Content */}
+                          <div className="mt-6 grid grid-cols-1 lg:grid-cols-[35%_65%] gap-6">
+                            {/* Left Side (Weather details) */}
+                            <div className="flex flex-col items-center lg:items-start lg:ml-4 text-center">
+                              <img
+                                src={showWeather[0]?.img}
+                                alt="Weather Icon"
+                                className="w-28 sm:w-36"
+                              />
+                              <h3 className="text-xl sm:text-2xl font-bold mt-2">
+                                {showWeather[0]?.type}
+                              </h3>
+                              <div className="flex items-center justify-center gap-2 mt-2">
                                 <img
                                   src="https://cdn-icons-png.flaticon.com/512/7794/7794499.png"
-                                  alt="Thermometer Icon"
-                                  className="h-9 mt-1"
+                                  alt="Thermometer"
+                                  className="h-6 sm:h-8"
                                 />
-                                <h2 className="text-4xl font-extrabold">
-                                  {apiData?.main?.temp}&#176;C
+                                <h2 className="text-2xl sm:text-3xl font-extrabold">
+                                  {apiData?.main?.temp}°C
                                 </h2>
                               </div>
-                              <div className="m-5 -ml-1 rounded-xl border border-gray-900 text-white bg-gray-900 pl-6 p-2">
-                                <h2 className="text-base w-50 font-semibold">
-                                  <span className="font-extrabold">Wind-speed : </span> {apiData?.wind?.speed} M/s
-                                </h2>
-                                <h2 className="text-base font-semibold">
-                                  <span className="font-extrabold">Humidity : </span>{apiData?.main?.humidity}%
-                                </h2>
-                              </div>                    
+                              <div className="mt-4 rounded-lg bg-gray-900 text-white px-5 py-3 text-sm sm:text-base font-semibold">
+                                <p>
+                                  <span className="font-extrabold">Wind:</span>{" "}
+                                  {apiData?.wind?.speed} M/s
+                                </p>
+                                <p>
+                                  <span className="font-extrabold">Humidity:</span>{" "}
+                                  {apiData?.main?.humidity}%
+                                </p>
+                              </div>
                             </div>
-                          )}
+
+                            {/* Right Side (Forecast cards) */}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 place-items-center">
+                              {forecastData.slice(0, 6).map((day, index) => {
+                                const date = new Date(day.dt * 1000).toLocaleDateString("en-US", {
+                                  weekday: "short",
+                                  day: "2-digit",
+                                  month: "short",
+                                });
+                                return (
+                                  <div
+                                    key={index}
+                                    className="bg-slate-200 w-full lg:w-[120px] h-32 flex flex-col justify-center items-center rounded-lg shadow"
+                                  >
+                                    <h4 className="text-xs sm:text-sm font-semibold">{date}</h4>
+                                    <img
+                                      src={
+                                        WeatherTypes.find(
+                                          (w) => w.type === day.weather[0].main
+                                        )?.img || ""
+                                      }
+                                      alt=""
+                                      className="h-10 my-2"
+                                    />
+                                    <h4 className="text-sm sm:text-base font-medium">
+                                      {day.main.temp}°C
+                                    </h4>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      {/* Forecast display section for the next 6 days */}
-                      <div className="grid gap-4 grid-cols-3 m-5">
-                        {forecastData.slice(0, 6).map((day, index) => {
-                          const date = new Date(day.dt * 1000).toLocaleDateString("en-US", {
-                            weekday: 'short', day: '2-digit', month: 'short'
-                          });
-                          return (
-                            <div key={index} className="bg-slate-300 h-32 w-[100px] flex flex-col justify-center items-center rounded-xl p-4">
-                              <h4 className=" text-xs font-semibold">{date}</h4>
-                              <img src={WeatherTypes.find(w => w.type === day.weather[0].main)?.img || ""} alt="" className="h-12 m-2" />
-                              <h4 className="font-medium">{day.main.temp}°C</h4>
-                            </div>
-                          );
-                        })}
                       </div>
                     </>
                   )}
@@ -205,7 +260,8 @@ const App = () => {
           </div>
         </div>
       </div>
-      </div>
+
+    </div>
   );
 };
 
