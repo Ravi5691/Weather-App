@@ -111,6 +111,7 @@ const App = () => {
           src="/image.png"
           alt="pattern"
           className="w-full h-full object-cover filter brightness-50"
+          loading="lazy"
         />
       </div>
 
